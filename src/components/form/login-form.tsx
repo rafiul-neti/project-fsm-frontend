@@ -2,14 +2,22 @@
 
 import { useForm } from "@tanstack/react-form";
 import { Eye, EyeClosed } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLogin } from "@/hooks";
 import { loginSchema } from "@/validation";
 import { Button } from "../ui/button";
 import { Field, FieldError, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
+import { Spinner } from "../ui/spinner";
+import { toast } from "../ui/toast";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
+  const { mutate: login, isPending: loginPending } = useLogin();
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -19,13 +27,41 @@ export default function LoginForm() {
       onSubmit: loginSchema,
     },
     onSubmit: ({ value }) => {
-      console.log(value);
+      const loginData = {
+        email: value.email,
+        password: value.password,
+      };
+
+      login(loginData, {
+        onSuccess: (res) => {
+          toast.add({
+            title: "Login Successful",
+            description: "You have successfully logged in.",
+            type: "success",
+          });
+          router.push("/");
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Login Failed",
+            description: err.message || "Invalid email or password.",
+            type: "error",
+          });
+        },
+      });
     },
   });
 
   return (
     <div>
-      <div className="">Login</div>
+      <div className="">
+        <h2 className="text-2xl font-bold text-center">
+          Login to your account
+        </h2>
+        <p className="text-sm text-center text-gray-500">
+          Enter your email and password to access your account.
+        </p>
+      </div>
 
       <form
         onSubmit={(e) => {
@@ -41,7 +77,9 @@ export default function LoginForm() {
 
             return (
               <Field className="my-5">
-                <FieldLabel htmlFor={field.name} className="-mb-2">Email</FieldLabel>
+                <FieldLabel htmlFor={field.name} className="-mb-2">
+                  Email
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -58,7 +96,6 @@ export default function LoginForm() {
           }}
         </form.Field>
 
-        {/* password input */}
         {/* password input */}
         <form.Field name="password">
           {(field) => {
@@ -98,8 +135,12 @@ export default function LoginForm() {
           }}
         </form.Field>
 
-        <Button type="submit" className={`rounded`}>
-          Submit
+        <Button
+          disabled={loginPending}
+          type="submit"
+          className={`rounded my-5`}
+        >
+          {loginPending ? <Spinner /> : "Submit"}
         </Button>
       </form>
     </div>
