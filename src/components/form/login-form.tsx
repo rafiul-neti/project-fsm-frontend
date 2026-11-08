@@ -1,13 +1,14 @@
 "use client";
 
+import { GoogleLogin } from "@react-oauth/google";
 import { useForm } from "@tanstack/react-form";
 import { Eye, EyeClosed } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useLogin } from "@/hooks";
+import { useGoogleOAuth, useLogin } from "@/hooks";
 import { loginSchema } from "@/validation";
 import { Button } from "../ui/button";
-import { Field, FieldError, FieldLabel } from "../ui/field";
+import { Field, FieldError, FieldLabel, FieldSeparator } from "../ui/field";
 import { Input } from "../ui/input";
 import { Spinner } from "../ui/spinner";
 import { toast } from "../ui/toast";
@@ -17,6 +18,7 @@ export default function LoginForm() {
   const router = useRouter();
 
   const { mutate: login, isPending: loginPending } = useLogin();
+  const { mutate: googleLogin } = useGoogleOAuth();
 
   const form = useForm({
     defaultValues: {
@@ -33,7 +35,7 @@ export default function LoginForm() {
       };
 
       login(loginData, {
-        onSuccess: (res) => {
+        onSuccess: () => {
           toast.add({
             title: "Login Successful",
             description: "You have successfully logged in.",
@@ -52,8 +54,54 @@ export default function LoginForm() {
     },
   });
 
+  const handleGoogleLoginSuccess = (credentialResponse: {
+    credential?: string;
+  }) => {
+    const idToken = credentialResponse.credential;
+
+    if (!idToken) {
+      toast.add({
+        title: "Google Login Failed",
+        description: "Something Went Wrong. Please Try Again.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    googleLogin(
+      { idToken },
+      {
+        onSuccess: () => {
+          toast.add({
+            title: "Google Login Successfull",
+            description: "Welcome to the App.",
+            type: "succcess",
+          });
+
+          router.push("/")
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Google Login Failed",
+            description: err.message ||  "Something Went Wrong. Please Try Again.",
+            type: "error",
+          });
+        },
+      },
+    );
+  };
+
+  const handleGoogleLoginError = () => {
+    toast.add({
+      title: "Google Login Failed",
+      description: "Something Went Wrong. Please Try Again.",
+      type: "error",
+    });
+  };
+
   return (
-    <div>
+    <div className="flex flex-col gap-5">
       <div className="">
         <h2 className="text-2xl font-bold text-center">
           Login to your account
@@ -138,11 +186,26 @@ export default function LoginForm() {
         <Button
           disabled={loginPending}
           type="submit"
-          className={`rounded my-5`}
+          className={`rounded my-5 w-full`}
         >
-          {loginPending ? <Spinner /> : "Submit"}
+          {loginPending ? (
+            <>
+              Submitting <Spinner />
+            </>
+          ) : (
+            "Submit"
+          )}
         </Button>
       </form>
+
+      <FieldSeparator>Or</FieldSeparator>
+
+      <GoogleLogin
+        text="continue_with"
+        shape="rectangular"
+        onSuccess={handleGoogleLoginSuccess}
+        onError={handleGoogleLoginError}
+      />
     </div>
   );
 }
