@@ -6,3 +6,13 @@ export function userLogin(payload: { email: string; password: string }) {
     body: payload,
   });
 }
+
+export function getLoggedInUser() {
+  return apiClient("/auth/get-current-user");
+}
+
+export function userLogout() {
+  return apiClient("/auth/logout", {
+    method: "POST",
+  });
+}

@@ -1,6 +1,11 @@
+"use client";
+
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
+import { useGetLoggedInUser, useLogout } from "@/hooks";
 
 export default function Header() {
   const routes = [
@@ -8,6 +13,30 @@ export default function Header() {
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
+
+  const { data, isLoading } = useGetLoggedInUser();
+  const { mutate: logout } = useLogout();
+  const queryClient = useQueryClient();
+
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        toast.add({
+          title: "Logged Out",
+          description: "Logged out Successfully.",
+          type: "success",
+        });
+        queryClient.removeQueries({ queryKey: ["logged-in-user"] });
+      },
+      onError: () => {
+        toast.add({
+          title: "Logout Failed",
+          description: "Something Went Wrong.",
+          type: "error",
+        });
+      },
+    });
+  };
 
   return (
     <header className="w-full h-16">
@@ -24,15 +53,28 @@ export default function Header() {
         </nav>
 
         <div className="gap-4 flex items-center">
-          <Button
-            variant="outline"
-            render={<Link href="/login">Login</Link>}
-            nativeButton={false}
-          >
-            Login
-          </Button>
+          {!isLoading && !data && (
+            <>
+              <Button
+                variant="outline"
+                render={<Link href="/login">Login</Link>}
+                nativeButton={false}
+              >
+                Login
+              </Button>
 
-          <Button className={`rounded-md`}>Apply as Technician</Button>
+              <Button className={`rounded-md`}>Apply as Technician</Button>
+            </>
+          )}
+          {!isLoading && data && (
+            <Button
+              onClick={handleLogout}
+              variant={`destructive`}
+              className={`rounded-md`}
+            >
+              Logout
+            </Button>
+          )}
         </div>
       </div>
     </header>
