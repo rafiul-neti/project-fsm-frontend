@@ -12,6 +12,7 @@ export default function Header() {
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
+    { name: "Services", path: "/services" },
   ];
 
   const { data, isLoading } = useGetLoggedInUser();
@@ -52,13 +53,14 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="gap-4 flex items-center">
+        <div className="gap-1.5 flex items-center">
           {!isLoading && !data && (
             <>
               <Button
                 variant="outline"
                 render={<Link href="/login">Login</Link>}
                 nativeButton={false}
+                className={`rounded-md`}
               >
                 Login
               </Button>
