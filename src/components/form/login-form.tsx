@@ -1,12 +1,13 @@
 "use client";
 
-import { GoogleLogin } from "@react-oauth/google";
 import { useForm } from "@tanstack/react-form";
 import { Eye, EyeClosed } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useGoogleOAuth, useLogin } from "@/hooks";
+import { useLogin } from "@/hooks";
 import { loginSchema } from "@/validation";
+import GoogleOAuthLogin from "../GoogleLogin";
 import { Button } from "../ui/button";
 import { Field, FieldError, FieldLabel, FieldSeparator } from "../ui/field";
 import { Input } from "../ui/input";
@@ -18,7 +19,6 @@ export default function LoginForm() {
   const router = useRouter();
 
   const { mutate: login, isPending: loginPending } = useLogin();
-  const { mutate: googleLogin } = useGoogleOAuth();
 
   const form = useForm({
     defaultValues: {
@@ -53,52 +53,6 @@ export default function LoginForm() {
       });
     },
   });
-
-  const handleGoogleLoginSuccess = (credentialResponse: {
-    credential?: string;
-  }) => {
-    const idToken = credentialResponse.credential;
-
-    if (!idToken) {
-      toast.add({
-        title: "Google Login Failed",
-        description: "Something Went Wrong. Please Try Again.",
-        type: "error",
-      });
-
-      return;
-    }
-
-    googleLogin(
-      { idToken },
-      {
-        onSuccess: () => {
-          toast.add({
-            title: "Google Login Successfull",
-            description: "Welcome to the App.",
-            type: "succcess",
-          });
-
-          router.push("/")
-        },
-        onError: (err) => {
-          toast.add({
-            title: "Google Login Failed",
-            description: err.message ||  "Something Went Wrong. Please Try Again.",
-            type: "error",
-          });
-        },
-      },
-    );
-  };
-
-  const handleGoogleLoginError = () => {
-    toast.add({
-      title: "Google Login Failed",
-      description: "Something Went Wrong. Please Try Again.",
-      type: "error",
-    });
-  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -200,12 +154,16 @@ export default function LoginForm() {
 
       <FieldSeparator>Or</FieldSeparator>
 
-      <GoogleLogin
-        text="continue_with"
-        shape="rectangular"
-        onSuccess={handleGoogleLoginSuccess}
-        onError={handleGoogleLoginError}
-      />
+      <GoogleOAuthLogin />
+
+      <div className="flex items-center justify-center">
+        <small>
+          Don't have an account?{" "}
+          <Link className="text-primary" href={`/register`}>
+            Register
+          </Link>
+        </small>
+      </div>
     </div>
   );
 }

@@ -9,5 +9,32 @@ export const loginSchema = z.object({
     .regex(/[A-Z]/, "Password must contain at least 1 Uppercase Letter")
 
     .regex(/[0-9]/, "Password must contain at least 1 Number")
-    .regex(/[^A-Za-z0-9]/, "Password must contain at least 1 Special Character"),
+    .regex(
+      /[^A-Za-z0-9]/,
+      "Password must contain at least 1 Special Character",
+    ),
 });
+
+export const registerUserValidationSchema = z
+  .object({
+    name: z.string().min(3, { error: "Name is required!" }),
+    email: z.email("Invalid Email Address!"),
+    password: z
+      .string()
+      .min(8, "Password Must at least 8 Characters Long.")
+      .regex(/[a-z]/, "Password must contain at least 1 Lowercase Letter")
+      .regex(/[A-Z]/, "Password must contain at least 1 Uppercase Letter")
+
+      .regex(/[0-9]/, "Password must contain at least 1 Number")
+      .regex(
+        /[^A-Za-z0-9]/,
+        "Password must contain at least 1 Special Character",
+      ),
+    confirmPassword: z.string().min(8, "Confirm Password is required!"),
+    profilePhoto: z
+      .instanceof(File, { error: "Profile photo is required!" })
+      .nullable(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    error: "Passwords do not match!",
+  });
