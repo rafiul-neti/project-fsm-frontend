@@ -10,7 +10,7 @@ export default function PageHeader({
   subHeaderText,
 }: PageHeaderProps) {
   return (
-    <div className="flex flex-col gap-2 text-center">
+    <div className="flex flex-col gap-4 bg-[#F0FDFA] p-20"><div className="flex flex-col gap-2 text-center">
       <div className="flex justify-center items-center">
         <p className="bg-white py-0.5 px-5 rounded-xl text-primary font-semibold">
           {title}
@@ -22,6 +22,7 @@ export default function PageHeader({
       <div className="flex justify-center items-center">
         <p className="text-gray-600">{subHeaderText}</p>
       </div>
-    </div>
+    </div></div>
+    
   );
 }

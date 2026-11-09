@@ -2,7 +2,7 @@ import PageHeader from "@/components/PageHeader";
 
 export default function ServicesPage() {
   return (
-    <div className="flex flex-col gap-4 bg-[#F0FDFA] p-20">
+    <div className="">
       <PageHeader
         title="Services"
         headerText="Find the right service for your home"
