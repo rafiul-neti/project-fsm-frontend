@@ -1,4 +1,5 @@
 import Story from "@/components/modules/marketing/about/Story";
+import Values from "@/components/modules/marketing/about/Values";
 import PageHeader from "@/components/PageHeader";
 
 export default function AboutPage() {
@@ -13,6 +14,7 @@ export default function AboutPage() {
       <div className="max-w-7xl mx-auto">
         <Story />
       </div>
+      <Values />
     </>
   );
 }
