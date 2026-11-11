@@ -47,7 +47,7 @@ const Hero = () => {
               Book a service
             </Link>
             <Link
-              href="/apply"
+              href="/become-technician"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
                 "h-12 px-7",
