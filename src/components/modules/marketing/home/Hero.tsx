@@ -27,7 +27,7 @@ const Hero = () => {
               aria-hidden="true"
               className="text-primary"
             />
-            Verified technicians across Bangladesh
+            Verified technicians across Dhaka
           </span>
 
           <h1 className="font-heading text-4xl font-extrabold leading-[1.1] tracking-tight text-balance sm:text-5xl lg:text-[56px]">

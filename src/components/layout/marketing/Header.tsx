@@ -65,7 +65,15 @@ export default function Header() {
                 Login
               </Button>
 
-              <Button className={`rounded-md`}>Apply as Technician</Button>
+              <Button
+                render={
+                  <Link href="/become-technician">Become Technician</Link>
+                }
+                className={`rounded-md`}
+                nativeButton={false}
+              >
+                Apply as Technician
+              </Button>
             </>
           )}
           {!isLoading && data && (

@@ -41,15 +41,21 @@ const OtpSlot = ({
   </div>
 );
 
-const VerifyOtpForm = () => {
+const VerifyOtpForm = ({ verifying }: { verifying?: "technician" }) => {
   const router = useRouter();
   const email = useSearchParams().get("email");
   const { mutate: verifyOtp, isPending } = useVerifyOtp();
 
   // Without an email there is nothing to verify, so send the user back.
   useEffect(() => {
-    if (!email) router.replace("/register");
-  }, [email, router]);
+    if (!email) {
+      if (verifying === "technician") {
+        router.replace("/become-technician");
+        return;
+      }
+      router.replace("/register");
+    }
+  }, [email, router, verifying]);
 
   const form = useForm({
     defaultValues: {
@@ -62,9 +68,18 @@ const VerifyOtpForm = () => {
       if (!email) return;
 
       verifyOtp(
-        { email, otp: value.otp },
+        {
+          email,
+          otp: value.otp,
+          ...(verifying === "technician" && { verifying }),
+        },
         {
           onSuccess: () => {
+            if (verifying === "technician") {
+              router.push("/become-technician/success");
+              return;
+            }
+
             toast.add({
               title: "Email verified",
               description: "Your registration is complete. Please log in.",
@@ -184,10 +199,10 @@ const VerifyOtpForm = () => {
       <p className="text-center text-sm text-muted-foreground">
         Used the wrong email?{" "}
         <Link
-          href="/register"
+          href={`${verifying === "technician" ? "/become-technician" : "/register"}`}
           className="font-medium underline underline-offset-4 hover:text-primary"
         >
-          Register again
+          {verifying === "technician" ? "Apply again" : "Register again"}
         </Link>
       </p>
     </div>

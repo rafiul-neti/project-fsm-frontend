@@ -1,5 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import type { UserRegisterPayload } from "@/types/auth.types";
+import type { UserRegisterPayload } from "@/types";
 
 export function userRegister(payload: UserRegisterPayload) {
   const formData = new FormData();
@@ -13,11 +13,18 @@ export function userRegister(payload: UserRegisterPayload) {
   });
 }
 
-export function verifyEmail(payload: { email: string; otp: string }) {
-  return apiClient("/auth/verify-otp", {
-    method: "POST",
-    body: payload,
-  });
+export function verifyEmail(payload: {
+  email: string;
+  otp: string;
+  verifying?: "technician";
+}) {
+  return apiClient(
+    `${payload.verifying === "technician" ? "/technicians/verify-email" : "/auth/verify-otp"}`,
+    {
+      method: "POST",
+      body: { email: payload.email, otp: payload.otp },
+    },
+  );
 }
 
 export function userLogin(payload: { email: string; password: string }) {
