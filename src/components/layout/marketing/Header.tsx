@@ -2,20 +2,27 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { useGetLoggedInUser, useLogout } from "@/hooks";
 
 export default function Header() {
+  const pathname = usePathname();
+  const { data, isLoading } = useGetLoggedInUser();
+  const user = data?.data;
+
   const routes = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
     { name: "Services", path: "/services" },
+    ...(user
+      ? [{ name: "Dashboard", path: `/${user.role.toLowerCase()}` }]
+      : []),
   ];
 
-  const { data, isLoading } = useGetLoggedInUser();
   const { mutate: logout } = useLogout();
   const queryClient = useQueryClient();
 
@@ -46,15 +53,26 @@ export default function Header() {
           <Logo />
         </div>
         <nav className="flex gap-6">
-          {routes.map((route) => (
-            <Link key={route.path} href={route.path}>
-              {route.name}
-            </Link>
-          ))}
+          {routes.map((route) => {
+            const isActive = pathname === route.path;
+            return (
+              <Link
+                key={route.path}
+                href={route.path}
+                className={
+                  isActive
+                    ? "text-primary border-b-3 border-b-primary font-semibold"
+                    : ""
+                }
+              >
+                {route.name}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="gap-1.5 flex items-center">
-          {!isLoading && !data && (
+          {!isLoading && !user && (
             <>
               <Button
                 variant="outline"
@@ -76,7 +94,7 @@ export default function Header() {
               </Button>
             </>
           )}
-          {!isLoading && data && (
+          {!isLoading && user && (
             <Button
               onClick={handleLogout}
               variant={`destructive`}
