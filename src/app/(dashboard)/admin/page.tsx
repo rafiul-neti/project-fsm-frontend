@@ -1,7 +1,6 @@
+import AdminOverview from "@/components/modules/dashboard/admin/admin-overview";
 
 
-export default function AdminDashbaord() {
-  return (
-    <div>This is admin</div>
-  )
+export default function AdminDashboardPage() {
+  return <AdminOverview />;
 }
