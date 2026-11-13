@@ -1,7 +1,6 @@
-import React from 'react'
+import AdminUsers from "@/components/modules/dashboard/admin/admin-users";
 
-export default function UsersPage() {
-  return (
-    <div>UsersPage</div>
-  )
+
+export default function AdminUsersPage() {
+  return <AdminUsers />;
 }
