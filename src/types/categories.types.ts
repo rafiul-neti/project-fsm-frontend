@@ -8,3 +8,8 @@ export interface Category {
   isDeleted: boolean;
   deletedAt: string | null;
 }
+
+export interface CreateCategoryPayload {
+  name: string;
+  description: string;
+}

@@ -16,7 +16,7 @@ export const adminRoutes = [
         url: `${prefix}/applications`,
       },
       {
-        title: "Create Service Category",
+        title: "Service Categories",
         url: `${prefix}/categories`,
       },
       {
