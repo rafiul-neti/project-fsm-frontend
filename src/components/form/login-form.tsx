@@ -1,10 +1,11 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { Eye, EyeClosed } from "lucide-react";
+import { Eye, EyeClosed, ShieldCheck, UserRound, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { DEMO_ACCOUNTS } from "@/constants";
 import { useLogin } from "@/hooks";
 import { loginSchema } from "@/validation";
 import GoogleOAuthLogin from "../GoogleLogin";
@@ -14,11 +15,45 @@ import { Input } from "../ui/input";
 import { Spinner } from "../ui/spinner";
 import { toast } from "../ui/toast";
 
+const demoIcons = {
+  ADMIN: ShieldCheck,
+  CUSTOMER: UserRound,
+  TECHNICIAN: Wrench,
+};
+
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const router = useRouter();
 
   const { mutate: login, isPending: loginPending } = useLogin();
+
+  const handleDemoLogin = (account: (typeof DEMO_ACCOUNTS)[number]) => {
+    setActiveDemo(account.role);
+
+    login(
+      { email: account.email, password: account.password },
+      {
+        onSuccess: () => {
+          toast.add({
+            title: "Login Successful",
+            description: `You are signed in as ${account.label}.`,
+            type: "success",
+          });
+          router.push(account.redirectTo);
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Demo Login Failed",
+            description:
+              err.message || "Could not sign in to the demo account.",
+            type: "error",
+          });
+        },
+        onSettled: () => setActiveDemo(null),
+      },
+    );
+  };
 
   const form = useForm({
     defaultValues: {
@@ -142,7 +177,7 @@ export default function LoginForm() {
           type="submit"
           className={`rounded my-5 w-full`}
         >
-          {loginPending ? (
+          {loginPending && !activeDemo ? (
             <>
               Submitting <Spinner />
             </>
@@ -155,6 +190,52 @@ export default function LoginForm() {
       <FieldSeparator>Or</FieldSeparator>
 
       <GoogleOAuthLogin />
+
+      <FieldSeparator>Quick demo login</FieldSeparator>
+
+      {/* quick demo login */}
+      <div className="flex flex-col gap-3">
+        <p className="text-sm text-center text-gray-500">
+          Try each role with one click. No typing needed.
+        </p>
+
+        <ul className="flex flex-col gap-2.5">
+          {DEMO_ACCOUNTS.map((account) => {
+            const Icon = demoIcons[account.role];
+            const isActive = activeDemo === account.role;
+
+            return (
+              <li
+                key={account.role}
+                className="flex items-center gap-3 rounded-xl border border-gray-200 p-3"
+              >
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
+                  <Icon size={20} aria-hidden="true" />
+                </span>
+
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <span className="text-sm font-medium">{account.label}</span>
+                  <span className="text-xs text-gray-500">
+                    {account.description}
+                  </span>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="rounded"
+                  disabled={loginPending}
+                  onClick={() => handleDemoLogin(account)}
+                  aria-label={`Demo login as ${account.label}`}
+                >
+                  {isActive ? <Spinner /> : "Login"}
+                </Button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
 
       <div className="flex items-center justify-center">
         <small>

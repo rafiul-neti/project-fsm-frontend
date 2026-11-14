@@ -200,7 +200,7 @@ export default function TechnicianApplications() {
                         className={`rounded-md`}
                         render={
                           <Link
-                            href={`/admin/technician-applications/details?technicianId=${application.technicianProfileId}`}
+                            href={`/admin/applications/details?technicianId=${application.technicianProfileId}`}
                           />
                         }
                         nativeButton={false}

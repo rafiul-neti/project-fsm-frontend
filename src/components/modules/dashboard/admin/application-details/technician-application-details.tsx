@@ -6,41 +6,25 @@ import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
+import { toast } from "@/components/ui/toast";
+import { useGetTechnicianDetails, useUpdateTechnicianStatus } from "@/hooks";
+import type { TechnicianApplicationStatus } from "@/types";
 import ApplicationDetailsSkeleton from "./application-details-skeleton";
 import ApplicationDetailsView from "./application-details-view";
-
-// Import your actual API hooks.
-// import {
-//   useGetTechnicianApplicationDetails,
-//   useApproveTechnicianApplication,
-//   useRejectTechnicianApplication,
-// } from "@/hooks";
 
 export default function TechnicainApplicationDetails() {
   const searchParams = useSearchParams();
 
-  const technicianProfileId = searchParams.get("technicianProfileId");
+  const technicianProfileId = searchParams.get("technicianId");
 
-  // Connect your details API hook here.
-  // Pass technicianProfileId to your hook.
-  //
-  // const { data, isLoading, isError, error } =
-  //   useGetTechnicianApplicationDetails(technicianProfileId ?? "");
+  const { data, isLoading, isError, error } = useGetTechnicianDetails(
+    technicianProfileId ?? "",
+  );
 
-  // Connect your mutation hooks here.
-  //
-  // const { mutate: approveApplication, isPending: isApproving } =
-  //   useApproveTechnicianApplication();
-  //
-  // const { mutate: rejectApplication, isPending: isRejecting } =
-  //   useRejectTechnicianApplication();
+  const application = data?.data;
 
-  // Temporary placeholders: replace these with your hook results.
-  const isLoading = false;
-  const isError = false;
-  const error: unknown = null;
-  const application = undefined;
+  const { mutate: changeApplicationStatus, isPending: statusChanging } =
+    useUpdateTechnicianStatus();
 
   if (!technicianProfileId) {
     return (
@@ -86,7 +70,7 @@ export default function TechnicainApplicationDetails() {
 
           <Button
             variant="outline"
-            render={<Link href="/admin-dashboard/technician-applications" />}
+            render={<Link href="/admin/applications" />}
             nativeButton={false}
           >
             <ArrowLeft className="mr-2 size-4" />
@@ -97,30 +81,36 @@ export default function TechnicainApplicationDetails() {
     );
   }
 
-  // Connect your mutation handlers here.
-  const handleApprove = () => {
-    // approveApplication(application.id, {
-    //   onSuccess: () => {
-    //     // Invalidate the pending applications query.
-    //     // Navigate back to the applications page.
-    //   },
-    // });
-  };
-
-  const handleReject = () => {
-    // rejectApplication(application.id, {
-    //   onSuccess: () => {
-    //     // Invalidate the pending applications query.
-    //     // Navigate back to the applications page.
-    //   },
-    // });
+  const handleStatusChange = (
+    changedStatus: TechnicianApplicationStatus,
+    technicianId: string,
+  ) => {
+    changeApplicationStatus(
+      { technicianId, decision: changedStatus },
+      {
+        onSuccess: () => {
+          toast.add({
+            title: "",
+            description: "",
+            type: "success",
+          });
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Operation Failed",
+            description: err.message || "Something Went Wrong",
+            type: "error",
+          });
+        },
+      },
+    );
   };
 
   return (
     <ApplicationDetailsView
       application={application}
-      onApprove={handleApprove}
-      onReject={handleReject}
+      onStatusChange={handleStatusChange}
+      statusChanging={statusChanging}
     />
   );
 }

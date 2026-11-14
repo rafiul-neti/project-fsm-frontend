@@ -25,12 +25,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import type { TechnicianApplicationDetails } from "@/types";
+import { Spinner } from "@/components/ui/spinner";
+import type {
+  TechnicianApplicationDetails,
+  TechnicianApplicationStatus,
+} from "@/types";
 
 interface ApplicationDetailsViewProps {
   application: TechnicianApplicationDetails;
-  onApprove: () => void;
-  onReject: () => void;
+  onStatusChange: (
+    changedStatus: TechnicianApplicationStatus,
+    technicianId: string,
+  ) => void;
+  statusChanging: boolean;
 }
 
 const formatDate = (date: string) =>
@@ -78,20 +85,20 @@ function ApplicantOverview({
         <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-xl font-bold text-primary">
           {user.profileImage ? (
             <img
-              src={user.profileImage}
-              alt={user.name}
+              src={user?.profileImage}
+              alt={user?.name}
               className="size-full object-cover"
             />
           ) : (
-            user.name.slice(0, 1).toUpperCase()
+            user.name?.slice(0, 1).toUpperCase()
           )}
         </div>
 
         <div className="min-w-0 flex-1 space-y-1">
-          <h2 className="text-xl font-semibold">{user.name}</h2>
+          <h2 className="text-xl font-semibold">{user?.name}</h2>
 
           <p className="break-all text-sm text-muted-foreground">
-            {user.email}
+            {user?.email}
           </p>
 
           <div className="flex flex-wrap gap-2 pt-2">
@@ -137,9 +144,9 @@ function ApplicantInformation({
       </CardHeader>
 
       <CardContent className="grid gap-5 sm:grid-cols-2">
-        <DetailItem icon={User} label="Full Name" value={user.name} />
+        <DetailItem icon={User} label="Full Name" value={user?.name} />
 
-        <DetailItem icon={Mail} label="Email Address" value={user.email} />
+        <DetailItem icon={Mail} label="Email Address" value={user?.email} />
 
         <DetailItem
           icon={Phone}
@@ -222,11 +229,11 @@ function ApplicantSkills({
           <div className="flex flex-wrap gap-2">
             {skills.map((skill, index) => (
               <Badge
-                key={`${skill.category.name}-${index}`}
-                variant="secondary"
-                className="px-3 py-1.5"
+                key={`${skill.category?.name}-${index}`}
+                variant="outline"
+                className="px-3 py-1.5 border border-primary rounded-full"
               >
-                {skill.category.name}
+                {skill.category?.name}
               </Badge>
             ))}
           </div>
@@ -278,13 +285,13 @@ function LicenseDocument({ licenseURL }: { licenseURL: string | null }) {
                     href={licenseURL}
                     target="_blank"
                     rel="noopener noreferrer"
-                  />
+                  >
+                    <ExternalLink className="mr-2 size-4" />
+                    Open Document
+                  </Link>
                 }
                 nativeButton={false}
-              >
-                <ExternalLink className="mr-2 size-4" />
-                Open Document
-              </Button>
+              />
             </div>
 
             <div className="overflow-hidden rounded-lg border bg-muted/20">
@@ -312,12 +319,17 @@ function LicenseDocument({ licenseURL }: { licenseURL: string | null }) {
 
 function ApplicationActions({
   status,
-  onApprove,
-  onReject,
+  technicianId,
+  onStatusChange,
+  statusChanging,
 }: {
   status: TechnicianApplicationDetails["applicationStatus"];
-  onApprove: () => void;
-  onReject: () => void;
+  technicianId: string;
+  onStatusChange: (
+    changedStatus: TechnicianApplicationStatus,
+    technicianId: string,
+  ) => void;
+  statusChanging: boolean;
 }) {
   if (status !== "PENDING") return null;
 
@@ -335,15 +347,30 @@ function ApplicationActions({
         <Separator className="mb-5" />
 
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <Button variant="destructive" onClick={onReject}>
-            <XCircle className="mr-2 size-4" />
-            Reject Application
-          </Button>
+          {statusChanging ? (
+            <Button disabled={statusChanging} className={`w-full`}>
+              <Spinner />
+            </Button>
+          ) : (
+            <>
+              <Button
+                disabled={statusChanging}
+                variant="destructive"
+                onClick={() => onStatusChange("REJECTED", technicianId)}
+              >
+                <XCircle className="mr-2 size-4" />
+                Reject Application
+              </Button>
 
-          <Button onClick={onApprove}>
-            <CheckCircle2 className="mr-2 size-4" />
-            Approve Application
-          </Button>
+              <Button
+                disabled={statusChanging}
+                onClick={() => onStatusChange("APPROVED", technicianId)}
+              >
+                <CheckCircle2 className="mr-2 size-4" />
+                Approve Application
+              </Button>
+            </>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -352,8 +379,8 @@ function ApplicationActions({
 
 export default function ApplicationDetailsView({
   application,
-  onApprove,
-  onReject,
+  onStatusChange,
+  statusChanging,
 }: ApplicationDetailsViewProps) {
   return (
     <div className="space-y-6">
@@ -398,8 +425,9 @@ export default function ApplicationDetailsView({
 
       <ApplicationActions
         status={application.applicationStatus}
-        onApprove={onApprove}
-        onReject={onReject}
+        technicianId={application.id}
+        onStatusChange={onStatusChange}
+        statusChanging={statusChanging}
       />
     </div>
   );

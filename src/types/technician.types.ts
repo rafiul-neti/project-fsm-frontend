@@ -13,3 +13,5 @@ export interface ApplyTechnicianPayload {
   license: File;
   data: ApplyTechnicianData;
 }
+
+export type TechnicianApplicationStatus = "REJECTED" | "APPROVED";

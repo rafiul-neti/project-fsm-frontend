@@ -1,9 +1,10 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import {
   getAdminDashboardStats,
   getAllUsers,
   getTechnicianApplications,
   getTechnicianDetails,
+  updateTechnicianStatus,
 } from "@/api";
 
 export function useGetAdminDashboardStats() {
@@ -38,5 +39,11 @@ export function useGetTechnicianDetails(technicianId: string) {
   return useQuery({
     queryKey: [`technician-details`, technicianId],
     queryFn: () => getTechnicianDetails(technicianId),
+  });
+}
+
+export function useUpdateTechnicianStatus() {
+  return useMutation({
+    mutationFn: updateTechnicianStatus,
   });
 }

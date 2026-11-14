@@ -8,13 +8,12 @@ import { Button } from "@/components/ui/button";
 export default function TechnicianApplicationDetailsPage() {
   return (
     <div className="space-y-6 p-4 md:p-6">
-      {/* Static page heading */}
       <div className="space-y-3">
         <Button
           variant="ghost"
           size="sm"
           className="-ml-3"
-          render={<Link href="/admin/technician-applications" />}
+          render={<Link href="/admin/applications" />}
           nativeButton={false}
         >
           <ArrowLeft className="mr-2 size-4" />
@@ -37,7 +36,6 @@ export default function TechnicianApplicationDetailsPage() {
         </div>
       </div>
 
-      {/* Dynamic island */}
       <Suspense fallback={<ApplicationDetailsSkeleton />}>
         <TechnicainApplicationDetails />
       </Suspense>

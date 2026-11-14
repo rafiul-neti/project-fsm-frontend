@@ -27,3 +27,31 @@ export function isAcceptedFileType(fileType: string, fileIs?: "doc" | "img") {
   }
   return ACCEPTED_FILE_TYPES.includes(fileType);
 }
+
+/* Demo Login */
+export const DEMO_ACCOUNTS = [
+  {
+    role: "ADMIN",
+    label: "Admin",
+    description: "Manage requests, users and technician applications",
+    email: "admin@fsm.com",
+    password: "Admin123!",
+    redirectTo: "/admin",
+  },
+  {
+    role: "CUSTOMER",
+    label: "Customer",
+    description: "Book services and track your requests",
+    email: "demo.customer@fsm.com",
+    password: "REPLACE_WITH_DEMO_PASSWORD",
+    redirectTo: "/customer",
+  },
+  {
+    role: "TECHNICIAN",
+    label: "Technician",
+    description: "Manage assigned jobs and availability",
+    email: "demo.technician@fsm.com",
+    password: "REPLACE_WITH_DEMO_PASSWORD",
+    redirectTo: "/technician",
+  },
+] as const;

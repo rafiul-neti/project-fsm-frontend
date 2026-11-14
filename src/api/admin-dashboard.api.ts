@@ -3,6 +3,7 @@ import type {
   AdminDashboardStats,
   ApiResponse,
   TechnicianApplication,
+  TechnicianApplicationDetails,
   User,
 } from "@/types";
 
@@ -29,5 +30,20 @@ export function getTechnicianApplications() {
 }
 
 export function getTechnicianDetails(technicianId: string) {
-  return apiClient(`/admin/technicians-applications/${technicianId}`);
+  return apiClient<ApiResponse<TechnicianApplicationDetails>>(
+    `/admin/technicians-applications/${technicianId}`,
+  );
+}
+
+export function updateTechnicianStatus(payload: {
+  technicianId: string;
+  decision: "APPROVED" | "REJECTED";
+}) {
+  return apiClient(
+    `/technicians/${payload.technicianId}/update-application-status`,
+    {
+      method: "PATCH",
+      body: { decision: payload.decision },
+    },
+  );
 }
