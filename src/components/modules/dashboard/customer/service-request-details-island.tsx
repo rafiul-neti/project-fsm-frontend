@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useGetServiceRequestDetails } from "@/hooks";
@@ -120,9 +121,22 @@ function RequestDetails({ request }: { request: ServiceRequestDetails }) {
             </p>
           </div>
 
-          <Badge className="border px-3 py-1 rounded-full" variant={getStatusVariant(request.status)}>
-            {formatStatus(request.status)}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant={getStatusVariant(request.status)}>
+              {formatStatus(request.status)}
+            </Badge>
+
+            <Button
+              disabled={!request.technicianId}
+              onClick={() => {
+                // Handle payment here
+              }}
+
+              className={`rounded disabled:bg-gray-500`}
+            >
+              Pay Now
+            </Button>
+          </div>
         </CardHeader>
 
         <CardContent className="space-y-5">

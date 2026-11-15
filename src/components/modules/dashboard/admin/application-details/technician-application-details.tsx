@@ -1,9 +1,9 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/ui/toast";
@@ -14,6 +14,8 @@ import ApplicationDetailsView from "./application-details-view";
 
 export default function TechnicainApplicationDetails() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const technicianProfileId = searchParams.get("technicianId");
 
@@ -88,12 +90,15 @@ export default function TechnicainApplicationDetails() {
     changeApplicationStatus(
       { technicianId, decision: changedStatus },
       {
-        onSuccess: () => {
+        onSuccess: (res) => {
           toast.add({
-            title: "",
-            description: "",
+            title: `Application ${changedStatus}`,
+            description: res?.message || "Operation done successfully.",
             type: "success",
           });
+
+          queryClient.removeQueries({ queryKey: ["technician-applications"] });
+          router.push("/admin/applications");
         },
         onError: (err) => {
           toast.add({

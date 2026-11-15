@@ -100,7 +100,7 @@ function ActiveRequestCard({ request }: { request: ServiceRequest }) {
           <div className="min-w-0">
             <p className="truncate font-medium">{request.title}</p>
             <p className="text-sm text-muted-foreground">
-              {request.category.name} · Created {formatDate(request.createdAt)}
+              {request.category?.name} · Created {formatDate(request.createdAt)}
             </p>
           </div>
           <StatusPill status={request.status} />
@@ -133,7 +133,7 @@ function ActiveRequestCard({ request }: { request: ServiceRequest }) {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-muted-foreground">
             {request.technician
-              ? `Technician: ${request.technician.name}`
+              ? `Technician: ${request.technician?.name}`
               : "We are finding a technician for you."}
           </p>
           <Link
@@ -149,6 +149,7 @@ function ActiveRequestCard({ request }: { request: ServiceRequest }) {
 }
 
 function RecentRequests({ requests }: { requests: ServiceRequest[] }) {
+  console.log(requests)
   return (
     <Panel
       title="Recent requests"
@@ -166,7 +167,7 @@ function RecentRequests({ requests }: { requests: ServiceRequest[] }) {
                   {request.title}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {request.category.name} · {formatDate(request.createdAt)}
+                  {request.category?.name} · {formatDate(request?.createdAt)}
                 </span>
               </span>
               <StatusPill status={request.status} />
@@ -313,6 +314,7 @@ export default function CustomerHome({ userName }: { userName?: string }) {
   const activeRequest = requests.find((request) =>
     ACTIVE_STATUSES.includes(request.status),
   );
+  
   const awaitingPayment = requests
     .filter((request) => request.status === "INVOICED")
     .slice(0, 3);
@@ -339,6 +341,10 @@ export default function CustomerHome({ userName }: { userName?: string }) {
         </Button>
       </div>
     );
+  }
+
+  if(requestsQuery.isLoading) {
+    return null
   }
 
   return (

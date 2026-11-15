@@ -3,7 +3,7 @@ import AdminServiceRequests from "@/components/modules/dashboard/admin/admin-ser
 
 export default function AdminServiceRequestsPage() {
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="space-y-6 p-4">
       <div className="flex items-center gap-3">
         <div className="rounded-lg bg-primary/10 p-3">
           <ClipboardList className="size-6 text-primary" />

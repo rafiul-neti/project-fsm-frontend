@@ -1,9 +1,11 @@
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import {
+  assignServiceRequest,
   createServiceRequests,
   getAllServiceRequests,
   getMyServiceRequests,
   getServiceRequestDetails,
+  reviewServiceRequests,
 } from "@/api";
 import type { ServiceRequestsQueryParams } from "@/types";
 
@@ -35,5 +37,19 @@ export function useGetMyServiceRequests() {
 export function useCreateServiceRequest() {
   return useMutation({
     mutationFn: createServiceRequests,
+  });
+}
+
+export function useAssignServiceRequest() {
+  // const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: assignServiceRequest,
+  });
+}
+
+export function useReviewServiceRequest() {
+  return useMutation({
+    mutationFn: reviewServiceRequests,
   });
 }

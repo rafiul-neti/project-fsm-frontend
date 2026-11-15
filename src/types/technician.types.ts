@@ -15,3 +15,37 @@ export interface ApplyTechnicianPayload {
 }
 
 export type TechnicianApplicationStatus = "REJECTED" | "APPROVED";
+
+export type Technician = {
+  /** Technician profile id. Used for the availability lookup. */
+  id: string;
+  /** User id. Sent as `technicianId` when assigning a request. */
+  userId: string;
+  name: string;
+  serviceArea: string | null;
+  yearsOfExperience: number | null;
+};
+
+export type GetTechniciansParams = {
+  categoryId?: string;
+  status?: "PENDING" | "APPROVED" | "REJECTED";
+  searchTerm?: string;
+};
+
+export interface GetMyAssignedServiceRequestQueryParams {
+  page?: number;
+  limit?: number;
+  sortBy?: "status" | "createdAt" | "updatedAt";
+  sortOrder?: "asc" | "desc";
+  status?:
+    | "PENDING"
+    | "REVIEWED"
+    | "ASSIGNED"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "INVOICED"
+    | "PAID"
+    | "CLOSED"
+    | "CANCELLED"
+    | undefined;
+} 

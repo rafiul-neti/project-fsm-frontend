@@ -1,5 +1,16 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getAllPayments, getMyPayments, getPaymentDetails } from "@/api";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  getAllPayments,
+  getMyPayments,
+  getPaymentDetails,
+  initiatePayment,
+} from "@/api";
+
+export function useInitiatePayment() {
+  return useMutation({
+    mutationFn: initiatePayment,
+  });
+}
 
 export function useGetAllPayments(queryParams: {
   page?: number;

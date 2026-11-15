@@ -15,8 +15,8 @@ import { cn } from "@/lib/utils";
 
 // Adjust these to your admin routes (or import them from "@/routes").
 const links = {
-  requests: "/dashboard/service-requests",
-  technicians: "/dashboard/applications",
+  requests: "/admin/service-requests",
+  technicians: "/admin/applications",
 };
 
 const CURRENCY = "BDT";

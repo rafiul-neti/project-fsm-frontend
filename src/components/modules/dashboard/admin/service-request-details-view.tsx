@@ -27,7 +27,14 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { ServiceRequestDetails, UploadedFile } from "@/types";
-import { formatDateTime, formatGateway, formatMoney, formatStatus, getStatusStyle } from "@/utils";
+import {
+  formatDateTime,
+  formatGateway,
+  formatMoney,
+  formatStatus,
+  getStatusStyle,
+} from "@/utils";
+import AssignTechnicianDialog from "./assign-technician-dialog";
 
 const NOT_AVAILABLE = "Not available";
 
@@ -398,9 +405,17 @@ export default function ServiceRequestDetailsView({
               />
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
-              No technician is assigned to this request yet.
-            </p>
+            <div className="flex flex-col gap-5">
+              <p className="text-sm text-muted-foreground">
+                No technician is assigned to this request yet.
+              </p>
+
+              <AssignTechnicianDialog
+                categoryId={request.categoryId}
+                categoryName={request.category.name}
+                serviceRequestId={request.id}
+              />
+            </div>
           )}
         </SectionCard>
 

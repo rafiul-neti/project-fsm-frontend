@@ -1,7 +1,11 @@
 "use client";
 
-import { useGetMyServiceRequests } from "@/hooks";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { useGetMyServiceRequests, useInitiatePayment } from "@/hooks";
 import type { ServiceRequest } from "@/types";
+import { toast } from "@/components/ui/toast";
 
 function formatDate(date: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -19,9 +23,13 @@ function formatStatus(status: ServiceRequest["status"]) {
 }
 
 export default function CustomerServiceRequests() {
+  const router = useRouter();
   const { data: response, isPending, isError } = useGetMyServiceRequests();
 
   const requests: ServiceRequest[] = response?.data ?? [];
+
+  const { mutate: initiatePayment, isPending: paymentProcessing } =
+    useInitiatePayment();
 
   if (isPending) {
     return (
@@ -59,6 +67,24 @@ export default function CustomerServiceRequests() {
       </div>
     );
   }
+
+  const handlePayment = (serviceId: string) => {
+    initiatePayment(
+      { serviceId },
+      {
+        onSuccess: (res) => {
+          window.location.href = res?.data?.bkashURL;
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Payment Failed",
+            description: err.message || "Something went wrong",
+            type: "error"
+          })
+        },
+      },
+    );
+  };
 
   return (
     <section className="space-y-6">
@@ -104,6 +130,34 @@ export default function CustomerServiceRequests() {
                 </p>
                 <p className="mt-1">{formatDate(request.createdAt)}</p>
               </div>
+            </div>
+
+            <div className="mt-3 flex justify-evenly">
+              <Button
+                disabled={!request.technicianId}
+                className={`rounded`}
+                onClick={() => handlePayment(request.id)}
+              >
+                {paymentProcessing ? (
+                  <>
+                    <Spinner /> Processing ...
+                  </>
+                ) : (
+                  "Pay Now"
+                )}
+              </Button>
+
+              <Button
+                variant={`outline`}
+                className={`border border-primary rounded`}
+                onClick={() => {
+                  router.push(
+                    `/customer/requests/details?requestId=${request.id}`,
+                  );
+                }}
+              >
+                View Details
+              </Button>
             </div>
           </article>
         ))}

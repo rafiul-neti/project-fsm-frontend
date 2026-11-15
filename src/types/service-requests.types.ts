@@ -119,3 +119,53 @@ export interface CreateServiceRequestPayload {
   description: string;
   address: string;
 }
+
+export type AssignServiceRequestPayload = {
+  serviceRequestId: string;
+  /** User id of the technician (not the profile id). */
+  technicianId: string;
+};
+
+export interface AssignedServiceRequestPerson {
+  id: string;
+  name: string;
+  contactNumber: string | null;
+}
+
+export interface AssignedServiceRequestCategory {
+  id: string;
+  name: string;
+}
+
+export interface AssignedServiceRequest {
+  id: string;
+  customerId: string;
+  categoryId: string;
+  technicianId: string;
+  assignedById: string;
+  availabilityId: string | null;
+
+  title: string;
+  description: string;
+  address: string;
+  attachmentUrls: UploadedFile[] | null;
+
+  status: ServiceRequestStatus;
+
+  startedAt: string | null;
+  completedAt: string | null;
+  completionNotes: string | null;
+  completionPhotoUrls: UploadedFile[] | null;
+  finalAmount: string | null;
+
+  cancelledAt: string | null;
+  cancellationReason: string | null;
+
+  createdAt: string;
+  updatedAt: string;
+  isDeleted: boolean;
+  deletedAt: string | null;
+
+  customer: AssignedServiceRequestPerson;
+  category: AssignedServiceRequestCategory;
+}

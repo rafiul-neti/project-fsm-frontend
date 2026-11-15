@@ -1,6 +1,7 @@
 import apiClient from "@/lib/apiClient";
 import type {
   ApiResponse,
+  AssignServiceRequestPayload,
   CreateServiceRequestPayload,
   ServiceRequest,
   ServiceRequestDetails,
@@ -27,5 +28,24 @@ export function createServiceRequests(payload: CreateServiceRequestPayload) {
   return apiClient("/service-requests", {
     method: "POST",
     body: payload,
+  });
+}
+
+export function assignServiceRequest({
+  serviceRequestId,
+  technicianId,
+}: AssignServiceRequestPayload) {
+  return apiClient<ApiResponse<unknown>>(
+    `/service-requests/${serviceRequestId}/assign`,
+    {
+      method: "PATCH",
+      body: { technicianId },
+    },
+  );
+}
+
+export function reviewServiceRequests(serviceRequestId: string) {
+  return apiClient(`/service-requests/${serviceRequestId}/review`, {
+    method: "PATCH",
   });
 }

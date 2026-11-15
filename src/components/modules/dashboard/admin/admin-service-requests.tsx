@@ -1,9 +1,9 @@
 "use client";
 
+import type { UseMutateFunction } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -21,10 +22,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetAllServiceRequests } from "@/hooks";
+import { useGetAllServiceRequests, useReviewServiceRequest } from "@/hooks";
 import { cn } from "@/lib/utils";
 import type { ServiceRequest, ServiceRequestStatus } from "@/types";
 import { formatMoney, formatStatus, getStatusStyle } from "@/utils";
+
 // import {
 //   formatMoney,
 //   formatStatus,
@@ -82,7 +84,15 @@ const useDebouncedValue = (value: string, delay = 400) => {
   return debounced;
 };
 
-function RequestRow({ request }: { request: ServiceRequest }) {
+function RequestRow({
+  request,
+  reviewRequest,
+  requestReviewing,
+}: {
+  request: ServiceRequest;
+  reviewRequest: UseMutateFunction<any, Error, string, unknown>;
+  requestReviewing: boolean;
+}) {
   const statusStyle = getStatusStyle(request.status);
 
   return (
@@ -143,12 +153,23 @@ function RequestRow({ request }: { request: ServiceRequest }) {
 
       <TableCell className="text-right">
         <Button
+          disabled={requestReviewing}
           variant="outline"
-          size="sm"
+          className={`border border-primary rounded text-primary`}
+          size="xs"
           render={<Link href={serviceRequestDetailsHref(request.id)} />}
           nativeButton={false}
+          onClick={() => {
+            reviewRequest(request.id);
+          }}
         >
-          View details
+          {requestReviewing ? (
+            <div className="flex items-center gap-0.5"> 
+              <Spinner /> <span>Redirecting</span>
+            </div>
+          ) : (
+            "Review"
+          )}
         </Button>
       </TableCell>
     </TableRow>
@@ -170,6 +191,9 @@ export default function AdminServiceRequests() {
     ...(status !== "ALL" && { status }),
     ...(searchTerm && { searchTerm }),
   });
+
+  const { mutate: reviewRequest, isPending: requestReviewing } =
+    useReviewServiceRequest();
 
   const requests = data?.data ?? [];
   const meta = data?.meta;
@@ -245,8 +269,8 @@ export default function AdminServiceRequests() {
                 <TableHead>Status</TableHead>
                 <TableHead>Final amount</TableHead>
                 <TableHead>Created</TableHead>
-                <TableHead className="text-right">
-                  <span className="sr-only">Actions</span>
+                <TableHead className="">
+                  <span className="">Actions</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -279,7 +303,12 @@ export default function AdminServiceRequests() {
 
               {!isLoading &&
                 requests.map((request) => (
-                  <RequestRow key={request.id} request={request} />
+                  <RequestRow
+                    key={request.id}
+                    request={request}
+                    reviewRequest={reviewRequest}
+                    requestReviewing={requestReviewing}
+                  />
                 ))}
             </TableBody>
           </Table>
