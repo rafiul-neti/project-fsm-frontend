@@ -1,8 +1,8 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -23,8 +23,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
 import { useCreateServiceRequest, useGetAllCategories } from "@/hooks";
-
-// import { createServiceRequestSchema } from "@/validation";
+import { createServiceRequestSchema } from "@/validation";
 
 const routes = {
   requests: "/customer/requests",
@@ -38,6 +37,7 @@ const textareaClass =
   "min-h-36 rounded-lg border border-input bg-background px-3.5 py-3";
 
 export default function BookServiceForm() {
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   const preselectedCategoryId = useSearchParams().get("categoryId") ?? "";
@@ -62,9 +62,9 @@ export default function BookServiceForm() {
       description: "",
       address: "",
     },
-    // validators: {
-    //   onSubmit: createServiceRequestSchema,
-    // },
+    validators: {
+      onSubmit: createServiceRequestSchema,
+    },
     onSubmit: ({ value }) => {
       createRequest(value, {
         onSuccess: (res) => {
@@ -75,6 +75,8 @@ export default function BookServiceForm() {
           });
           const id = res?.data?.id;
           router.push(id ? routes.requestDetails(id) : routes.requests);
+
+          queryClient.removeQueries({ queryKey: ["my-service-requests"] });
         },
         onError: (err) => {
           toast.add({

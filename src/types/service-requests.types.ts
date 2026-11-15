@@ -96,6 +96,8 @@ export interface ServiceRequestPayment {
 
 export interface ServiceRequestFeedback {
   id: string;
+  serviceRequestId: string;
+  customerId: string;
   rating: number;
   comment: string | null;
   createdAt: string;
