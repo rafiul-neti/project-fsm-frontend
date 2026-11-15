@@ -3,5 +3,6 @@ export * from "./api-response.types";
 export * from "./auth.types";
 export * from "./categories.types";
 export * from "./payments.types";
+export * from "./service-requests.types";
 export * from "./technician.types";
 export * from "./user.types";

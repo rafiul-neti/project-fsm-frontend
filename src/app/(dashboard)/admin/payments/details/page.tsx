@@ -1,9 +1,8 @@
 import { ArrowLeft, Receipt } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-
-import PaymentDetailsContainer from "@/components/modules/dashboard/admin/payments/payment-details";
-import PaymentDetailsSkeleton from "@/components/modules/dashboard/admin/payments/payment-details-skeleton";
+import PaymentDetailsContainer from "@/components/modules/dashboard/admin/payment-details";
+import PaymentDetailsSkeleton from "@/components/modules/dashboard/admin/payment-details-skeleton";
 import { Button } from "@/components/ui/button";
 
 export default function PaymentDetailsPage() {

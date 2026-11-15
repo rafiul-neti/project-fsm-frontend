@@ -1,13 +1,4 @@
-type ServiceRequestStatus =
-  | "PENDING"
-  | "PAID"
-  | "REVIEWED"
-  | "ASSIGNED"
-  | "IN_PROGRESS"
-  | "COMPLETED"
-  | "INVOICED"
-  | "CLOSED"
-  | "CANCELLED";
+import type { ServiceRequestStatus } from "./service-requests.types";
 
 export interface PaymentCustomer {
   id: string;
