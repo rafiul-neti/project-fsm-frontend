@@ -4,8 +4,16 @@ export const customerRoutes = [
   {
     items: [
       {
-        title: "Stats",
+        title: "Home",
         url: `${prefix}`,
+      },
+      {
+        title: "Book Service",
+        url: `${prefix}/book`,
+      },
+      {
+        title: "My Service Requests",
+        url: `${prefix}/requests`,
       },
       {
         title: "Payments",

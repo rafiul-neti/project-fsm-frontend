@@ -110,3 +110,10 @@ export interface ServiceRequestDetails
   payment: ServiceRequestPayment | null;
   feedback: ServiceRequestFeedback | null;
 }
+
+export interface CreateServiceRequestPayload {
+  categoryId: string;
+  title: string;
+  description: string;
+  address: string;
+}

@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getAllPayments, getPaymentDetails } from "@/api";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { getAllPayments, getMyPayments, getPaymentDetails } from "@/api";
 
 export function useGetAllPayments(queryParams: {
   page?: number;
@@ -15,5 +15,13 @@ export function useGetPaymentDetails(paymentId: string) {
   return useQuery({
     queryKey: ["payment-details", paymentId],
     queryFn: () => getPaymentDetails(paymentId),
+  });
+}
+
+export function useGetMyPayments() {
+  return useQuery({
+    queryKey: ["my-payments"],
+    queryFn: getMyPayments,
+    placeholderData: keepPreviousData,
   });
 }

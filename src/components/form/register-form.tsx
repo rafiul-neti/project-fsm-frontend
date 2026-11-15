@@ -276,7 +276,7 @@ export default function RegisterForm() {
                     id={field.name}
                     name={field.name}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    type={showPassword ? "text" : "password"}
+                    type={showConfirmPassword ? "text" : "password"}
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     aria-invalid={isInvalid}

@@ -10,3 +10,7 @@ export function getAllPayments(queryParams: { page?: number; limit?: number }) {
 export function getPaymentDetails(paymentId: string) {
   return apiClient<ApiResponse<PaymentDetails>>(`/payments/${paymentId}`);
 }
+
+export function getMyPayments() {
+  return apiClient<ApiResponse<Payment[]>>("/payments/me");
+}

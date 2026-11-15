@@ -1,5 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { getAllServiceRequests, getServiceRequestDetails } from "@/api";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  createServiceRequests,
+  getAllServiceRequests,
+  getMyServiceRequests,
+  getServiceRequestDetails,
+} from "@/api";
 import type { ServiceRequestsQueryParams } from "@/types";
 
 export function useGetAllServiceRequests(
@@ -16,5 +21,19 @@ export function useGetServiceRequestDetails(requestId: string) {
     queryKey: ["service-request", requestId],
     queryFn: () => getServiceRequestDetails(requestId),
     enabled: !!requestId,
+  });
+}
+
+export function useGetMyServiceRequests() {
+  return useQuery({
+    queryKey: ["my-service-requests"],
+    queryFn: getMyServiceRequests,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useCreateServiceRequest() {
+  return useMutation({
+    mutationFn: createServiceRequests,
   });
 }
