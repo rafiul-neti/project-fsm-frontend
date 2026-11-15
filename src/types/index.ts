@@ -1,5 +1,6 @@
 export * from "./admin-dashboard.types";
 export * from "./api-response.types";
+export * from "./audit-logs.types";
 export * from "./auth.types";
 export * from "./categories.types";
 export * from "./payments.types";
