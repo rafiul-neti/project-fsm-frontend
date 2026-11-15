@@ -48,4 +48,15 @@ export interface GetMyAssignedServiceRequestQueryParams {
     | "CLOSED"
     | "CANCELLED"
     | undefined;
-} 
+}
+
+export interface TechnicianSkill {
+  id: string;
+  technicianProfileId: string;
+  categoryId: string;
+  category: {
+    id: string;
+    name: string;
+    description: string;
+  };
+}

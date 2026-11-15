@@ -1,8 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  addNewSkill,
   applyAsTechnician,
   getMyAssignedServiceRequests,
+  getMySkills,
   getTechnicians,
+  removeMySkill,
 } from "@/api";
 import type {
   GetMyAssignedServiceRequestQueryParams,
@@ -32,5 +35,24 @@ export function useGetMyAssignedServiceRequests(
   return useQuery({
     queryKey: ["get-my-assigned-service-requests", params],
     queryFn: () => getMyAssignedServiceRequests(params),
+  });
+}
+
+export function useGetMySkills() {
+  return useQuery({
+    queryKey: ["get-my-skills"],
+    queryFn: getMySkills,
+  });
+}
+
+export function useRemoveMySkill() {
+  return useMutation({
+    mutationFn: removeMySkill,
+  });
+}
+
+export function useAddNewSkill() {
+  return useMutation({
+    mutationFn: addNewSkill,
   });
 }

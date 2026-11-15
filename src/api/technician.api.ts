@@ -6,6 +6,7 @@ import type {
   GetMyAssignedServiceRequestQueryParams,
   GetTechniciansParams,
   Technician,
+  TechnicianSkill,
 } from "@/types";
 
 export function applyAsTechnician(payload: ApplyTechnicianPayload) {
@@ -29,7 +30,27 @@ export function getTechnicians(params: GetTechniciansParams = {}) {
 export function getMyAssignedServiceRequests(
   queryParams: GetMyAssignedServiceRequestQueryParams,
 ) {
-  return apiClient<ApiResponse<AssignedServiceRequest[]>>("/service-requests/assigned-to-me", {
-    query: queryParams,
+  return apiClient<ApiResponse<AssignedServiceRequest[]>>(
+    "/service-requests/assigned-to-me",
+    {
+      query: queryParams,
+    },
+  );
+}
+
+export function getMySkills() {
+  return apiClient<ApiResponse<TechnicianSkill[]>>("/technicians/me/skills");
+}
+
+export function removeMySkill(categoryId: string) {
+  return apiClient(`/technicians/me/skills/${categoryId}`, {
+    method: "DELETE",
+  });
+}
+
+export function addNewSkill(categoryId: string) {
+  return apiClient("/technicians/me/skills", {
+    method: "POST",
+    body: { categoryId },
   });
 }
